@@ -23,15 +23,14 @@ public class Card {
     private String code;
 
 
-
+    public Card() {
+    }
 
     public Card(String number, String title, String date, String code) {
         this.number = number;
         this.title = title;
         this.date = cardDate(date);
         this.code = code;
-        createTypes();
-        this.type = validateTypeCard(createTypes());
     }
 
 
@@ -77,28 +76,13 @@ public class Card {
         this.date = date;
     }
 
-    private Map<String, Type> createTypes(){
-        Map<String, Type> types = new HashMap<>();
-        types.put("03", type.MasterCard);
-        types.put("06",type.VISA);
-        types.put("12", type.PRIME);
-        return types;
-    }
-
-    private Type validateTypeCard(Map<String, Type> types){
-        var validateCode = code.split("-");
-        var validateMap =types.get(validateCode[0]);
-        if (validateMap == null)
-            throw new IllegalArgumentException("codigo invalido");
-        return validateMap;
-    }
 
     private String cardDate(String date){
       var reformatDate =   date.split("-");
       return date(Integer.parseInt(reformatDate[0]),Integer.parseInt(reformatDate[1]));
     }
 
-    public String date(int month, int year) {
+    private String date(int month, int year) {
         String format = "";
         LocalDate date;
         int day = 1;

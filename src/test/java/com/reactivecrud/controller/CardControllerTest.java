@@ -49,7 +49,7 @@ class CardControllerTest {
     void post(String number, String title, String date,String code, Integer times){
 
         if (times == 0) {
-           when(repository.findByTitle(title)).thenReturn(Mono.just(new Card(number,title,date,code)));
+           when(repository.findByTitle(title)).thenReturn(Mono.just(new Card()));
         }
         if (times == 1) {
             when(repository.findByTitle(title).thenReturn(Mono.empty()));
@@ -95,17 +95,20 @@ class CardControllerTest {
 
     @Test
     void getByType() {
-        var list = Mono.just(
-                new Card("40001111111","creditCard","03-2022","06-0225")
+        var list = Flux.just(
+                new Card("01","premiumupdate","03-2025","06-0225")
         );
 
-        when(repository.findByTitle("MasterdCard")).thenReturn(list);
+        when(repository.findByType("VISA")).thenReturn(list);
         webTestClient.get()
-                .uri("/card/MasterdCard/type")
+                .uri("/card/VISA/type")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$[0].title").isEqualTo("creditCard");
+                .jsonPath("$[0].title").isEqualTo("premiumupdate");
+
+        verify(cardService).listByType("VISA");
+        verify(repository).findByTitle("VISA");
     }
 
     @Test
@@ -119,6 +122,8 @@ class CardControllerTest {
                     var card = cardEntityExchangeResult.getResponseBody();
                     assert card == null;
                 });
+
+
     }
 
     @Test

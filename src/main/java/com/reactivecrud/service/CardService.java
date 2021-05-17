@@ -1,11 +1,17 @@
 package com.reactivecrud.service;
 
 import com.reactivecrud.entity.Card;
+
 import com.reactivecrud.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+
+
+import static com.reactivecrud.service.CardTypeGenerate.createTypes;
+import static com.reactivecrud.service.CardTypeGenerate.validateTypeCard;
 
 @Service
 public class CardService {
@@ -18,9 +24,14 @@ public class CardService {
     }
 
 
-    public Mono<Void> insert(Mono<Card> cardMono){
+
+
+    public Mono<Card> insert(Mono<Card> cardMono){
         return cardMono
-                .flatMap(cardRepository::save).then().log();
+                .flatMap(card -> {
+                    card.setType(validateTypeCard(createTypes(),card.getCode()));
+                    return cardRepository.save(card);
+                });
     }
 
 

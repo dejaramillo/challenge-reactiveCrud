@@ -15,7 +15,7 @@ public class CardController {
     CardService cardService;
 
     @PostMapping(value = "/save")
-    public Mono<Void> save(@RequestBody Mono<Card> cardMono) {
+    public Mono<Card> save(@RequestBody Mono<Card> cardMono) {
         return cardService.insert(cardMono);
     }
 
@@ -41,7 +41,7 @@ public class CardController {
     }
 
     @PutMapping(value = "/up")
-    public Mono<Void> update(@RequestBody Mono<Card> personMono) {
+    public Mono<Card> update(@RequestBody Mono<Card> personMono) {
         return cardService.insert(personMono);
     }
 
