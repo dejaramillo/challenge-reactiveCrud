@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface CardRepository extends ReactiveMongoRepository<Card, String> {
-    Mono<Card> findByCode(String code);
+    Mono<Card> findByNumber(String code);
 }

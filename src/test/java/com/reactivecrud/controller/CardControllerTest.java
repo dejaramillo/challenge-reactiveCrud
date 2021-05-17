@@ -17,6 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -41,17 +43,17 @@ class CardControllerTest {
     private CardRepository repository;
 
     @ParameterizedTest
-    @CsvSource({"ctc,06-524,0", "ctc,06-524,1"})
-    void post(String number, String title, String code, Integer times){
+    @CsvSource({"010,ctc,03-25,06-524,0", "010,ctc,03-25,06-524,1"})
+    void post(String number, String title, String date, String code, Integer times){
 
        if (times == 0) {
-            when(repository.findByCode(code)).thenReturn(Mono.just(new Card()));
+            when(repository.findByNumber(number)).thenReturn(Mono.just(new Card()));
         }
         if (times == 1) {
-            when(repository.findByCode(code).thenReturn(Mono.empty()));
+            when(repository.findByNumber(number).thenReturn(Mono.empty()));
         }
 
-        var request  = Mono.just(new Card(number,title,code));
+        var request  = Mono.just(new Card(number,title,date,code));
         webTestClient.post().uri("/card/save")
                 .body(request, Card.class)
                 .exchange()
