@@ -40,5 +40,10 @@ public class CardController {
         return cardService.deleteCard(id);
     }
 
+    @PutMapping(value = "/up")
+    public Mono<Void> update(@RequestBody Mono<Card> personMono) {
+        return cardService.insert(personMono);
+    }
+
 
 }

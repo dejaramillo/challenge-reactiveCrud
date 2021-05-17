@@ -130,4 +130,15 @@ class CardControllerTest {
                 .expectBody().isEmpty();
     }
 
+    @Test
+    void update() {
+        var request = Mono.just(new Card("01","prem","03-2026","03-2529"));
+        webTestClient.put()
+                .uri("/card/up")
+                .body(request, Card.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().isEmpty();
+    }
+
 }

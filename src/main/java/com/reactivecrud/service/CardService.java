@@ -37,7 +37,7 @@ public class CardService {
     }
 
     public Mono<Void> deleteCard(String id){
-        return cardRepository.deleteById(id).then();
+        return cardRepository.deleteById(id);
     }
 
 }
