@@ -4,6 +4,7 @@ import com.reactivecrud.entity.Card;
 import com.reactivecrud.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -17,6 +18,18 @@ public class CardController {
     public Mono<Void> save(@RequestBody Mono<Card> cardMono){
         return cardService.insert(cardMono);
     }
+
+
+    @GetMapping(value = "/all")
+    public Flux<Card> listCards(){
+        return  cardService.listAll();
+    }
+
+    @GetMapping(value = "/{type}/type")
+    public Flux<Card> listByType(@PathVariable("type") String type){
+        return cardService.listByType(type);
+    }
+
 
 
 

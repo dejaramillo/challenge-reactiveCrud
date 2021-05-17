@@ -23,17 +23,18 @@ public class Card {
     private String code;
 
 
-    public Card() {
-    }
 
-    public Card(String number, String title,String date, String code) {
+
+    public Card(String number, String title, String date, String code) {
         this.number = number;
         this.title = title;
         this.date = cardDate(date);
-        createTypes();
         this.code = code;
+        createTypes();
         this.type = validateTypeCard(createTypes());
     }
+
+
 
     public String getNumber() {
         return number;
@@ -100,7 +101,7 @@ public class Card {
     public String date(int month, int year) {
         String format = "";
         LocalDate date;
-        int day = 0;
+        int day = 1;
         try {
             date = LocalDate.of(year, month, day);
             if(date.isBefore(LocalDate.now())){

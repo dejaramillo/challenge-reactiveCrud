@@ -4,26 +4,28 @@ import com.reactivecrud.entity.Card;
 import com.reactivecrud.repository.CardRepository;
 import com.reactivecrud.service.CardService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static reactor.core.publisher.Mono.when;
+import static org.mockito.Mockito.*;
+
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = CardController.class)
@@ -43,14 +45,14 @@ class CardControllerTest {
     private CardRepository repository;
 
     @ParameterizedTest
-    @CsvSource({"010,ctc,03-25,06-524,0", "010,ctc,03-25,06-524,1"})
-    void post(String number, String title, String date, String code, Integer times){
+    @CsvSource({"010,ctc,03-2025,06-524,0", "010,ctc,03-2025,06-524,1"})
+    void post(String number, String title, String date,String code, Integer times){
 
-       if (times == 0) {
-            when(repository.findByNumber(number)).thenReturn(Mono.just(new Card()));
+        if (times == 0) {
+           when(repository.findByTitle(title)).thenReturn(Mono.just(new Card(number,title,date,code)));
         }
         if (times == 1) {
-            when(repository.findByNumber(number).thenReturn(Mono.empty()));
+            when(repository.findByTitle(title).thenReturn(Mono.empty()));
         }
 
         var request  = Mono.just(new Card(number,title,date,code));
@@ -69,6 +71,26 @@ class CardControllerTest {
         assertEquals(title, card.getTitle());
         assertEquals(code, card.getCode());
 
+    }
+
+    @Test
+    void list() {
+        var list = Flux.just(
+                new Card("40001111111","creditCard","03-2022","06-0225")
+        );
+
+            when(repository.findAll()).thenReturn(list);
+        webTestClient.get()
+                .uri("/card/all")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].title").isEqualTo("creditCard")
+                .jsonPath("$[0].date").isEqualTo("03-2022")
+                .jsonPath("$[0].code").isEqualTo("06-0225");
+
+        verify(cardService).listAll();
+        verify(repository).findAll();
     }
 
 }
