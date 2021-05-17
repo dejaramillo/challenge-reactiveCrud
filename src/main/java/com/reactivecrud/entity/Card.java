@@ -79,8 +79,8 @@ public class Card {
 
     private Map<String, Type> createTypes(){
         Map<String, Type> types = new HashMap<>();
-        types.put("06", type.MasterdCard);
-        types.put("03",type.VISA);
+        types.put("03", type.MasterCard);
+        types.put("06",type.VISA);
         types.put("12", type.PRIME);
         return types;
     }

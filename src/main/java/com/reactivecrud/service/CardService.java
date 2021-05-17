@@ -32,4 +32,12 @@ public class CardService {
         return cardRepository.findByType(type);
     }
 
+    public Mono<Card> getCard(String id){
+        return cardRepository.findById(id);
+    }
+
+    public Mono<Void> deleteCard(String id){
+        return cardRepository.deleteById(id).then();
+    }
+
 }

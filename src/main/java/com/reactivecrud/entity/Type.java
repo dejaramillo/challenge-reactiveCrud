@@ -1,7 +1,7 @@
 package com.reactivecrud.entity;
 
 public enum Type {
-    MasterdCard,
+    MasterCard,
     PRIME,
     VISA,
 }

@@ -3,14 +3,14 @@ package com.reactivecrud.controller;
 import com.reactivecrud.entity.Card;
 import com.reactivecrud.repository.CardRepository;
 import com.reactivecrud.service.CardService;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -91,6 +91,43 @@ class CardControllerTest {
 
         verify(cardService).listAll();
         verify(repository).findAll();
+    }
+
+    @Test
+    void getByType() {
+        var list = Mono.just(
+                new Card("40001111111","creditCard","03-2022","06-0225")
+        );
+
+        when(repository.findByTitle("MasterdCard")).thenReturn(list);
+        webTestClient.get()
+                .uri("/card/MasterdCard/type")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].title").isEqualTo("creditCard");
+    }
+
+    @Test
+    void get() {
+        webTestClient.get()
+                .uri("/card/01")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Card.class)
+                .consumeWith(cardEntityExchangeResult -> {
+                    var card = cardEntityExchangeResult.getResponseBody();
+                    assert card == null;
+                });
+    }
+
+    @Test
+    void delete() {
+        webTestClient.delete()
+                .uri("/card/01/del")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().isEmpty();
     }
 
 }

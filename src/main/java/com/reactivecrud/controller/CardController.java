@@ -15,23 +15,30 @@ public class CardController {
     CardService cardService;
 
     @PostMapping(value = "/save")
-    public Mono<Void> save(@RequestBody Mono<Card> cardMono){
+    public Mono<Void> save(@RequestBody Mono<Card> cardMono) {
         return cardService.insert(cardMono);
     }
 
 
     @GetMapping(value = "/all")
-    public Flux<Card> listCards(){
-        return  cardService.listAll();
+    public Flux<Card> listCards() {
+        return cardService.listAll();
     }
 
     @GetMapping(value = "/{type}/type")
-    public Flux<Card> listByType(@PathVariable("type") String type){
+    public Flux<Card> listByType(@PathVariable("type") String type) {
         return cardService.listByType(type);
     }
 
+    @GetMapping(value = "/{id}")
+    public  Mono<Card> getCard(@PathVariable("id") String id){
+        return cardService.getCard(id);
+    }
 
-
+    @DeleteMapping(value = "/{id}/del")
+    public Mono<Void> delete(@PathVariable("id") String id){
+        return cardService.deleteCard(id);
+    }
 
 
 }
