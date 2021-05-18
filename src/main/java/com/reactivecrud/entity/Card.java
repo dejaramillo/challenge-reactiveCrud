@@ -23,8 +23,6 @@ public class Card {
     private String code;
 
 
-    public Card() {
-    }
 
     public Card(String number, String title, String date, String code) {
         this.number = number;
@@ -32,7 +30,6 @@ public class Card {
         this.date = cardDate(date);
         this.code = code;
     }
-
 
 
     public String getNumber() {

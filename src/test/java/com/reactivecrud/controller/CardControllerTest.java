@@ -45,25 +45,18 @@ class CardControllerTest {
     private CardRepository repository;
 
     @ParameterizedTest
-    @CsvSource({"010,ctc,03-2025,06-524,0", "010,ctc,03-2025,06-524,1"})
-    void post(String number, String title, String date,String code, Integer times){
+    @CsvSource({"010,ctc,03-2025,06-524,0"})
+    void post(String number, String title, String date,String code){
 
-        if (times == 0) {
-           when(repository.findByTitle(title)).thenReturn(Mono.just(new Card()));
-        }
-        if (times == 1) {
-            when(repository.findByTitle(title).thenReturn(Mono.empty()));
-        }
-
+        when(repository.save(any(Card.class))).thenReturn(Mono.just(new Card(number,title,date,code)));
         var request  = Mono.just(new Card(number,title,date,code));
         webTestClient.post().uri("/card/save")
                 .body(request, Card.class)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().isEmpty();
+                .expectBody().returnResult();
 
         verify(cardService).insert(argumentCaptor.capture());
-        verify(repository, times(times)).save(any());
 
         var card = argumentCaptor.getValue().block();
 
@@ -105,14 +98,16 @@ class CardControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$[0].title").isEqualTo("premiumupdate");
+                .jsonPath("$[0].title").isEqualTo("premiumupdate")
+                .jsonPath("$[0].date").isEqualTo("03-2025");
 
         verify(cardService).listByType("VISA");
-        verify(repository).findByTitle("VISA");
+        verify(repository).findByType("VISA");
     }
 
     @Test
     void get() {
+        when(repository.findById(anyString())).thenReturn(Mono.just(new Card("100","ctc","03-2023","06-2025")));
         webTestClient.get()
                 .uri("/card/01")
                 .exchange()
@@ -120,7 +115,7 @@ class CardControllerTest {
                 .expectBody(Card.class)
                 .consumeWith(cardEntityExchangeResult -> {
                     var card = cardEntityExchangeResult.getResponseBody();
-                    assert card == null;
+                    assert card != null;
                 });
 
 
@@ -137,13 +132,14 @@ class CardControllerTest {
 
     @Test
     void update() {
+        when(repository.save(any(Card.class))).thenReturn(Mono.just(new Card("100","tcc","12-2025","12-2520")));
         var request = Mono.just(new Card("01","prem","03-2026","03-2529"));
         webTestClient.put()
                 .uri("/card/up")
                 .body(request, Card.class)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().isEmpty();
+                .expectBody().returnResult();
     }
 
 }
